@@ -1,8 +1,12 @@
 #include <iostream>
+#include string
 using namespace std;
 
 int main(){
 	cout << "Hello World" << endl;
 	cout << "This is a Test";
-	cout<<"This is a test commit from safwan";
+
+	string ash;
+	ash = "Hello";
+	cout << ash;
 }
