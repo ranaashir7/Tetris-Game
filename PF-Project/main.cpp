@@ -3,7 +3,7 @@
 using namespace std;
 
 // =====================================================================
-//                              CONSTANT DIMENSIONS
+//                              CONSTANTS
 // =====================================================================
 const int ROWS = 20;
 const int COLS = 10;
@@ -77,6 +77,10 @@ int curRot = 0;     // which rotation, 0 to 3
 int curRow = 0;     // row of the top-left corner of the piece's 4x4 box
 int curCol = 3;     // column of the top-left corner of the piece's 4x4 box
 
+// Gravity
+float fallDelay = 0.5f;   // seconds between each step down (smaller = faster)
+float fallTimer = 0.f;    // time collected since the last step down
+
 // =====================================================================
 //                         FUNCTION PROTOTYPES
 // =====================================================================
@@ -106,8 +110,12 @@ int main()
     sf::RenderWindow window(sf::VideoMode({ 800, 1000 }), "Tetris");
     window.setFramerateLimit(60);
 
+    sf::Clock clock;
+
     while (window.isOpen())
     {
+        float dt = clock.restart().asSeconds();
+
         // 1. INPUT
         while (const optional event = window.pollEvent())
         {
@@ -135,7 +143,26 @@ int main()
             }
         }
 
-        // 2. UPDATE (gravity timer goes here later)
+        // 2. UPDATE
+        fallTimer += dt;
+        if (fallTimer >= fallDelay)
+        {
+            fallTimer = 0.f;
+
+            bool moved = moveDown();
+
+            // TEMPORARY: fake floor so we can test the landing code.
+            // Delete these two lines once teammates B and C finish canPlace and moveDown.
+            if (curRow >= ROWS - 4)
+                moved = false;
+
+            if (!moved)
+            {
+                lockPiece();
+                clearRows();
+                spawnPiece();
+            }
+        }
 
         // 3. DRAW
         window.clear(sf::Color(20, 20, 30));
