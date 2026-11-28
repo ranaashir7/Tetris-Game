@@ -53,6 +53,7 @@ void moveLeft();
 void moveRight();
 void moveDown();
 
+void rotatePiece();
 int main()
 {
     RenderWindow window(VideoMode({ 520, 640 }), "Tetris");
@@ -97,18 +98,22 @@ void handleInput(RenderWindow& window)
         }
         else if (const auto* key = event->getIf<Event::KeyPressed>())
         {
-            // TEMP TEST (a teammate's input code replaces this later)
+            // To check my moving functions
             if (key->code == Keyboard::Key::Left)
             {
                 moveLeft();
             }
-            else if (key->code == Keyboard::Key::Right)
+            else if (key->code == Keyboard::Key::Right)     
             {
                 moveRight();
             }
             else if (key->code == Keyboard::Key::Down)
             {
                 moveDown();
+            }
+            else if (key->code == Keyboard::Key::Up)
+            {
+                rotatePiece();
             }
         }
     }
@@ -291,5 +296,28 @@ void moveDown()
     if (canPlace(shape, pieceRow + 1, pieceCol))
     {
         pieceRow++;
+    }
+}
+void rotatePiece()
+{
+    char rotated[4][4];
+
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            rotated[c][3 - r] = shape[r][c];
+        }
+    }
+
+    if (canPlace(rotated, pieceRow, pieceCol))
+    {
+        for (int r = 0; r < 4; r++)
+        {
+            for (int c = 0; c < 4; c++)
+            {
+                shape[r][c] = rotated[r][c];
+            }
+        }
     }
 }
