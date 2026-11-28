@@ -105,6 +105,22 @@ void clearSaveFile();
 // TASK 6
 void spawnPiece();
 
+// FEATURE 7 - MENU AND GAME STATES
+void updateGame();
+void startNewGame();
+void handleMenuInput(RenderWindow& window);
+void handlePlayingInput();
+void handleGameOverInput();
+void drawMenu(RenderWindow& window);
+void drawPlaying(RenderWindow& window);
+void drawGameOver(RenderWindow& window);
+
+// Other teams' functions and Feature 8 (placeholders for now)
+void updateFalling();      // Task 3, teammate A
+void hardDrop();           // Task 3, teammate A
+bool loadGame();           // Feature 8
+void saveGame();           // Feature 8
+
 
 
 //rest
