@@ -12,3 +12,4 @@ Release/
 *.obj
 *.ilk
 *.log
+savegame.txt
