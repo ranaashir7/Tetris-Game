@@ -260,19 +260,9 @@ void setupGame()
 {
     piecesLoaded = loadPieces();
     fontLoaded = loadFont();
-
-    for (int r = 0; r < ROWS; r++)
-    {
-        for (int c = 0; c < COLS; c++)
-        {
-            board[r][c] = 0;
-        }
-    }
-    //added for temporary test
-    currentPiece = 2;
-    loadShape(currentPiece);
-    pieceRow = 0;
-    pieceCol = 3;
+    gameState = MENU;
+    menuChoice = 0;
+    showNoSave = false;
 }
 
 void handleInput(RenderWindow& window)
