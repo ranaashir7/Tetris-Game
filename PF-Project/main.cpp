@@ -236,7 +236,8 @@ void drawSidePanel(RenderWindow& window)
 }
 void clearSaveFile()
 {
-    // TODO 7: teammate C fills this in
+    ofstream fout("savegame.txt");   // opening with ofstream empties the file
+    fout.close();
 }
 // MAIN PROGRAM
 int main()
@@ -560,9 +561,7 @@ void spawnPiece()
 // FEATURE 7 - MENU AND GAME STATES
 // ============================================================
 
-// Temporary placeholders until Feature 8 is written
-void saveGame() {}
-bool loadGame() { return false; }
+
 
 void startNewGame()
 {
@@ -722,4 +721,86 @@ void updateGame()
     {
         updateFalling();    // Task 3, FOR SAFWAN
     }
+}
+
+
+// ============================================================
+// FEATURE 8 - SAVE AND CONTINUE
+// ============================================================
+
+// File format:
+// line 1: score lines level
+// line 2: next piece (0 to 6)
+// lines 3-22: the 20 board rows, 10 numbers each
+void saveGame()
+{
+    ofstream fout("savegame.txt");
+    if (!fout)
+    {
+        return;
+    }
+
+    fout << score << " " << lines << " " << level << "\n";
+    fout << nextPiece << "\n";
+
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            fout << board[r][c] << " ";
+        }
+        fout << "\n";
+    }
+
+    fout.close();
+}
+
+// Returns false if there is no saved game (file missing or damaged)
+bool loadGame()
+{
+    ifstream fin("savegame.txt");
+    if (!fin)
+    {
+        return false;
+    }
+
+    int tScore, tLines, tLevel, tNext;
+    if (!(fin >> tScore >> tLines >> tLevel))
+    {
+        return false;               // empty or damaged file
+    }
+    if (!(fin >> tNext) || tNext < 0 || tNext > 6)
+    {
+        return false;
+    }
+
+    int tBoard[ROWS][COLS];
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            fin >> tBoard[r][c];
+        }
+    }
+    if (fin.fail())
+    {
+        return false;               // board was cut short
+    }
+
+    // only copy into the game after everything has been read successfully
+    score = tScore;
+    lines = tLines;
+    level = tLevel;
+    nextPiece = tNext;
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            board[r][c] = tBoard[r][c];
+        }
+    }
+
+    updateSpeed();                  // fall speed matches the loaded level
+    fin.close();
+    return true;
 }
