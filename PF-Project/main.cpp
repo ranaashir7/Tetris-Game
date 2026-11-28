@@ -80,7 +80,12 @@ void drawMiniPiece(RenderWindow& window, int pieceNumber, float x, float y);
 void drawSidePanel(RenderWindow& window);
 void clearSaveFile();
 
+// TASK 6
+void spawnPiece();
 
+
+
+//rest
 bool canPlace(char s[4][4], int row, int col);
 void moveLeft();
 void moveRight();
@@ -464,5 +469,20 @@ void rotatePiece()
                 shape[r][c] = rotated[r][c];
             }
         }
+    }
+}
+
+void spawnPiece()
+{
+    currentPiece = nextPiece;          // the NEXT piece starts falling
+    nextPiece = rand() % 7;            // pick a new NEXT piece
+    loadShape(currentPiece);
+    pieceRow = START_ROW;
+    pieceCol = START_COL;
+
+    // if the new piece does not fit at the top, the pile has reached the top
+    if (!canPlace(shape, pieceRow, pieceCol))
+    {
+        endGame();                     // sets gameState = GAME_OVER and clears the save
     }
 }
