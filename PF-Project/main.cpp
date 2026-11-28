@@ -545,6 +545,8 @@ void spawnPiece()
 {
     currentPiece = nextPiece;          // the NEXT piece starts falling
     nextPiece = rand() % 7;            // pick a new NEXT piece
+    canHold = true;                    
+    frameCounter = 0;
     loadShape(currentPiece);
     pieceRow = START_ROW;
     pieceCol = START_COL;
@@ -556,6 +558,65 @@ void spawnPiece()
     }
 }
 
+
+
+
+// ============================================================
+// FEATURE 4 - FALLING AND LOCKING (skeleton Task 3)
+// ============================================================
+
+// Copies the falling piece's blocks into the board
+void lockPiece()
+{
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if (shape[r][c] == '#')
+            {
+                board[pieceRow + r][pieceCol + c] = currentPiece + 1;
+            }
+        }
+    }
+}
+
+// Lock the piece, clear full rows, add points, then start the next piece
+void lockAndContinue()
+{
+    lockPiece();
+    int cleared = clearLines();
+    addScore(cleared);
+    spawnPiece();
+}
+
+// Space: drop straight down as far as possible, then lock at once
+void hardDrop()
+{
+    while (canPlace(shape, pieceRow + 1, pieceCol))
+    {
+        pieceRow++;
+    }
+    lockAndContinue();
+}
+
+// Called every frame: the piece falls one row every fallDelay frames
+void updateFalling()
+{
+    frameCounter++;
+    if (frameCounter >= fallDelay)
+    {
+        frameCounter = 0;
+
+        if (canPlace(shape, pieceRow + 1, pieceCol))
+        {
+            pieceRow++;
+        }
+        else
+        {
+            lockAndContinue();
+        }
+    }
+}
 
 // ============================================================
 // FEATURE 7 - MENU AND GAME STATES
