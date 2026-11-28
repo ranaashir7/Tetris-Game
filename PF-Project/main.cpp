@@ -204,6 +204,7 @@ void clearSaveFile()
 
 int main()
 {
+    srand(static_cast<unsigned>(time(nullptr)));
     RenderWindow window(VideoMode({ 520, 640 }), "Tetris");
     window.setFramerateLimit(60);
 
