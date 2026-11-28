@@ -38,7 +38,6 @@ int gameState;
 
 bool piecesLoaded;
 bool fontLoaded;
-bool gameover; //for temporary running
 
 // Globals for task 7
 const int MENU = 0;
@@ -251,6 +250,7 @@ int main()
     while (window.isOpen())
     {
         handleInput(window);
+        updateGame();
         drawGame(window);
     }
     return 0;
@@ -275,22 +275,53 @@ void handleInput(RenderWindow& window)
         }
         else if (const auto* key = event->getIf<Event::KeyPressed>())
         {
-            // To check my moving functions
-            if (key->code == Keyboard::Key::Left)
+            switch (key->code)
             {
-                moveLeft();
+            case Keyboard::Key::Left:
+            case Keyboard::Key::A:
+                pressedKey = KEY_LEFT;
+                break;
+            case Keyboard::Key::Right:
+            case Keyboard::Key::D:
+                pressedKey = KEY_RIGHT;
+                break;
+            case Keyboard::Key::Down:
+            case Keyboard::Key::S:
+                pressedKey = KEY_DOWN;
+                break;
+            case Keyboard::Key::Up:
+            case Keyboard::Key::W:
+                pressedKey = KEY_UP;
+                break;
+            case Keyboard::Key::Space:
+                pressedKey = KEY_DROP;
+                break;
+            case Keyboard::Key::Enter:
+                pressedKey = KEY_ENTER;
+                break;
+            case Keyboard::Key::Escape:
+                pressedKey = KEY_ESC;
+                break;
+            default:
+                pressedKey = KEY_NONE;
+                break;
             }
-            else if (key->code == Keyboard::Key::Right)     
+
+            if (pressedKey != KEY_NONE)
             {
-                moveRight();
-            }
-            else if (key->code == Keyboard::Key::Down)
-            {
-                moveDown();
-            }
-            else if (key->code == Keyboard::Key::Up)
-            {
-                rotatePiece();
+                switch (gameState)
+                {
+                case MENU:
+                    handleMenuInput(window);
+                    break;
+                case PLAYING:
+                    handlePlayingInput();
+                    break;
+                case GAME_OVER:
+                    handleGameOverInput();
+                    break;
+                }
+                pressedKey = KEY_NONE;    // reset so the press is used only once
             }
         }
     }
@@ -306,10 +337,18 @@ void drawGame(RenderWindow& window)
     }
     else
     {
-        drawBoard(window);
-        drawPiece(window);
-        //DRAWING SIDE PANEL -- BY ASH
-        drawSidePanel(window);
+        switch (gameState)
+        {
+        case MENU:
+            drawMenu(window);
+            break;
+        case PLAYING:
+            drawPlaying(window);
+            break;
+        case GAME_OVER:
+            drawGameOver(window);
+            break;
+        }
     }
 
     window.display();
