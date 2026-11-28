@@ -274,6 +274,8 @@ void drawGame(RenderWindow& window)
     {
         drawBoard(window);
         drawPiece(window);
+        //DRAWING SIDE PANEL -- BY ASH
+        drawSidePanel(window);
     }
 
     window.display();
