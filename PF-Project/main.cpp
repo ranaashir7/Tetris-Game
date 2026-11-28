@@ -48,6 +48,11 @@ void drawError(RenderWindow& window);
 void loadShape(int pieceNumber);
 void drawPiece(RenderWindow& window);
 
+bool canPlace(char s[4][4], int row, int col);
+void moveLeft();
+void moveRight();
+void moveDown();
+
 int main()
 {
     RenderWindow window(VideoMode({ 520, 640 }), "Tetris");
@@ -75,6 +80,7 @@ void setupGame()
             board[r][c] = 0;
         }
     }
+    //added for temporary test
     currentPiece = 2;
     loadShape(currentPiece);
     pieceRow = 0;
@@ -88,6 +94,22 @@ void handleInput(RenderWindow& window)
         if (event->is<Event::Closed>())
         {
             window.close();
+        }
+        else if (const auto* key = event->getIf<Event::KeyPressed>())
+        {
+            // TEMP TEST (a teammate's input code replaces this later)
+            if (key->code == Keyboard::Key::Left)
+            {
+                moveLeft();
+            }
+            else if (key->code == Keyboard::Key::Right)
+            {
+                moveRight();
+            }
+            else if (key->code == Keyboard::Key::Down)
+            {
+                moveDown();
+            }
         }
     }
 }
@@ -221,5 +243,53 @@ void drawPiece(RenderWindow& window)
                 drawCell(window, BOARD_X + (pieceCol + c) * CELL, BOARD_Y + (pieceRow + r) * CELL, colors[currentPiece + 1]);
             }
         }
+    }
+}
+
+bool canPlace(char s[4][4], int row, int col)
+{
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if (s[r][c] == '#')
+            {
+                int boardRow = row + r;
+                int boardCol = col + c;
+                
+                if (boardCol <0 || boardCol >= COLS || boardRow >= ROWS)//this prevents from going out of boundry
+                {
+                    return false;
+                }
+                if (board[boardRow][boardCol] != 0)// this stops the motion when the collision is happened
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void moveLeft()
+{
+    if (canPlace(shape, pieceRow, pieceCol - 1))
+    {
+        pieceCol--;
+    }
+}
+void moveRight()
+{
+    if (canPlace(shape, pieceRow, pieceCol + 1))
+    {
+        pieceCol++;
+    }
+}
+
+void moveDown()
+{
+    if (canPlace(shape, pieceRow + 1, pieceCol))
+    {
+        pieceRow++;
     }
 }
