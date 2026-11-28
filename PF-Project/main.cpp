@@ -13,6 +13,10 @@ const float BOARD_Y = 20.f;
 int board[ROWS][COLS];
 char pieces[7][4][4];
 
+char shape[4][4];       
+int currentPiece;       
+int pieceRow, pieceCol;
+
 bool piecesLoaded;
 bool fontLoaded;
 
@@ -39,6 +43,10 @@ void drawText(RenderWindow& window, const string& words, float x, float y, int s
 bool loadPieces();
 void drawBoard(RenderWindow& window);
 void drawError(RenderWindow& window);
+
+// TASK 2
+void loadShape(int pieceNumber);
+void drawPiece(RenderWindow& window);
 
 int main()
 {
@@ -67,6 +75,10 @@ void setupGame()
             board[r][c] = 0;
         }
     }
+    currentPiece = 2;
+    loadShape(currentPiece);
+    pieceRow = 0;
+    pieceCol = 3;
 }
 
 void handleInput(RenderWindow& window)
@@ -91,6 +103,7 @@ void drawGame(RenderWindow& window)
     else
     {
         drawBoard(window);
+        drawPiece(window);
     }
 
     window.display();
@@ -185,4 +198,28 @@ void drawError(RenderWindow& window)
     window.clear(Color(120, 0, 0));
     drawText(window, "ERROR: pieces.txt not found!", 40, 260, 28);
     drawText(window, "Put it in the project folder and restart.", 40, 310, 20);
+}
+void loadShape(int pieceNumber)
+{
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            shape[r][c] = pieces[pieceNumber][r][c];
+        }
+    }
+}
+
+void drawPiece(RenderWindow& window)
+{
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if (shape[r][c] == '#')
+            {
+                drawCell(window, BOARD_X + (pieceCol + c) * CELL, BOARD_Y + (pieceRow + r) * CELL, colors[currentPiece + 1]);
+            }
+        }
+    }
 }
