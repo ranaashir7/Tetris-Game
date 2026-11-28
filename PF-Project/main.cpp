@@ -239,7 +239,7 @@ void clearSaveFile()
 {
     // TODO 7: teammate C fills this in
 }
-
+// MAIN PROGRAM
 int main()
 {
     srand(static_cast<unsigned>(time(nullptr)));
