@@ -40,6 +40,28 @@ bool piecesLoaded;
 bool fontLoaded;
 bool gameover; //for temporary running
 
+// Globals for task 7
+const int MENU = 0;
+const int PLAYING = 1;
+
+const int KEY_NONE = 0;
+const int KEY_LEFT = 1;
+const int KEY_RIGHT = 2;
+const int KEY_DOWN = 3;
+const int KEY_UP = 4;
+const int KEY_DROP = 5;
+const int KEY_HOLD = 6;
+const int KEY_ESC = 7;
+const int KEY_ENTER = 8;
+
+int menuChoice = 0;
+int pressedKey = KEY_NONE;
+bool showNoSave = false;
+int heldPiece = -1;
+bool canHold = true;
+
+//---------
+
 Font font;
 Color colors[8] = {
     Color(25, 25, 45),      // 0: empty
