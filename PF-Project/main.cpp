@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 using namespace sf;
 
@@ -10,6 +12,8 @@ const float CELL = 30.f;
 const float BOARD_X = 20.f;
 const float BOARD_Y = 20.f;
 
+const int START_ROW = 0;    // a new piece starts here
+const int START_COL = 3;
 const int LINES_PER_LEVEL = 10;
 const int LINE_POINTS[5] = { 0, 100, 300, 500, 800 };
 
@@ -29,10 +33,12 @@ int pieceRow, pieceCol;
 int score, lines, level;
 int nextPiece;
 int fallDelay;
+int frameCounter;
 int gameState;
 
 bool piecesLoaded;
 bool fontLoaded;
+bool gameover; //for temporary running
 
 Font font;
 Color colors[8] = {
@@ -62,6 +68,7 @@ void drawError(RenderWindow& window);
 void loadShape(int pieceNumber);
 void drawPiece(RenderWindow& window);
 
+
 // TASK 4
 int clearLines();
 void addScore(int cleared);
@@ -73,12 +80,14 @@ void drawMiniPiece(RenderWindow& window, int pieceNumber, float x, float y);
 void drawSidePanel(RenderWindow& window);
 void clearSaveFile();
 
+
 bool canPlace(char s[4][4], int row, int col);
 void moveLeft();
 void moveRight();
 void moveDown();
 
 void rotatePiece();
+
 
 
 // TASK 4 ITSELF
@@ -187,6 +196,7 @@ void clearSaveFile()
 {
     // TODO 7: teammate C fills this in
 }
+
 int main()
 {
     RenderWindow window(VideoMode({ 520, 640 }), "Tetris");
