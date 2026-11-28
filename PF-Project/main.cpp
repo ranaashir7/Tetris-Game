@@ -10,12 +10,17 @@ const float CELL = 30.f;
 const float BOARD_X = 20.f;
 const float BOARD_Y = 20.f;
 
+const int LINES_PER_LEVEL = 10;
+const int LINE_POINTS[5] = { 0, 100, 300, 500, 800 };
+
 int board[ROWS][COLS];
 char pieces[7][4][4];
 
 char shape[4][4];       
 int currentPiece;       
 int pieceRow, pieceCol;
+
+int score, lines, level;
 
 bool piecesLoaded;
 bool fontLoaded;
@@ -48,12 +53,78 @@ void drawError(RenderWindow& window);
 void loadShape(int pieceNumber);
 void drawPiece(RenderWindow& window);
 
+// TASK 4
+int clearLines();
+void addScore(int cleared);
+
+// TASK 5
+void updateSpeed();
+
 bool canPlace(char s[4][4], int row, int col);
 void moveLeft();
 void moveRight();
 void moveDown();
 
 void rotatePiece();
+
+
+// TASK 4 ITSELF
+int clearLines()
+{
+    int cleared = 0;        // keeps track of how many rows are cleared
+    int r = ROWS - 1;       // R start from the very bottom row
+
+    while (r >= 0) {
+        // check if row r is full runs till R 
+        bool full = true;
+        for (int c = 0; c < COLS; c++) {
+            if (board[r][c] == 0)
+            {
+                full = false;
+            }
+        }
+
+        if (full) {
+            // move every row above it down by one
+            for (int row = r; row > 0; row--) {
+                for (int c = 0; c < COLS; c++)
+                {
+                    board[row][c] = board[row - 1][c];
+                }
+            }
+
+            // top row becomes empty
+            for (int c = 0; c < COLS; c++) {
+                board[0][c] = 0;
+            }
+
+            cleared++;
+            // we don't do r-- here, because the row that just
+            // moved down into r could be full too so to accomodate for that clear will inc 
+        }
+        else {
+            r--;  // r decrements here at the end
+        }
+    }
+
+    return cleared;
+}
+void addScore(int cleared)
+{
+    if (cleared == 0) { //checks if no lines were cleared exists function immediately then
+        return;
+    }
+
+    score += LINE_POINTS[cleared];  // adds points based on how many lines were cleared to score
+    lines += cleared;
+    level = lines / LINES_PER_LEVEL + 1;
+    updateSpeed();
+}
+// TASK 5
+void updateSpeed()
+{
+    // TODO 5.1
+}
 int main()
 {
     RenderWindow window(VideoMode({ 520, 640 }), "Tetris");
