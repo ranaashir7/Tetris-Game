@@ -116,8 +116,8 @@ void drawPlaying(RenderWindow& window);
 void drawGameOver(RenderWindow& window);
 
 // Other teams' functions and Feature 8 (placeholders for now)
-void updateFalling();      // Task 3, teammate A
-void hardDrop();           // Task 3, teammate A
+void updateFalling();      // Task 3, teammate SAFWISH
+void hardDrop();           // Task 3, teammate SAFWISH
 bool loadGame();           // Feature 8
 void saveGame();           // Feature 8
 
@@ -523,5 +523,174 @@ void spawnPiece()
     if (!canPlace(shape, pieceRow, pieceCol))
     {
         endGame();                     // sets gameState = GAME_OVER and clears the save
+    }
+}
+
+
+// ============================================================
+// FEATURE 7 - MENU AND GAME STATES
+// ============================================================
+
+// Temporary placeholders until Feature 8 is written
+void saveGame() {}
+bool loadGame() { return false; }
+
+void startNewGame()
+{
+    for (int r = 0; r < ROWS; r++)
+    {
+        for (int c = 0; c < COLS; c++)
+        {
+            board[r][c] = 0;
+        }
+    }
+
+    score = 0;
+    lines = 0;
+    level = 1;
+    heldPiece = -1;
+    canHold = true;
+    updateSpeed();
+    nextPiece = rand() % 7;
+    gameState = PLAYING;
+    spawnPiece();
+}
+
+void handleMenuInput(RenderWindow& window)
+{
+    switch (pressedKey)
+    {
+    case KEY_UP:
+        menuChoice = (menuChoice + 2) % 3;   // 0 wraps to 2
+        showNoSave = false;
+        break;
+
+    case KEY_DOWN:
+        menuChoice = (menuChoice + 1) % 3;   // 2 wraps to 0
+        showNoSave = false;
+        break;
+
+    case KEY_ENTER:
+        if (menuChoice == 0)
+        {
+            startNewGame();
+        }
+        else if (menuChoice == 1)
+        {
+            if (loadGame())
+            {
+                heldPiece = -1;
+                canHold = true;
+                gameState = PLAYING;
+                spawnPiece();
+            }
+            else
+            {
+                showNoSave = true;
+            }
+        }
+        else
+        {
+            window.close();
+        }
+        break;
+    }
+}
+
+void handlePlayingInput()
+{
+    switch (pressedKey)
+    {
+    case KEY_LEFT:
+        moveLeft();
+        break;
+
+    case KEY_RIGHT:
+        moveRight();
+        break;
+
+    case KEY_DOWN:
+        moveDown();
+        break;
+
+    case KEY_UP:
+        rotatePiece();
+        break;
+
+    case KEY_DROP:
+        hardDrop();
+        break;
+
+    case KEY_ESC:
+        saveGame();
+        gameState = MENU;
+        menuChoice = 0;
+        showNoSave = false;
+        break;
+    }
+}
+
+void handleGameOverInput()
+{
+    if (pressedKey == KEY_ENTER)
+    {
+        clearSaveFile();
+        gameState = MENU;
+        menuChoice = 0;
+        showNoSave = false;
+    }
+}
+
+void drawMenu(RenderWindow& window)
+{
+    drawText(window, "TETRIS", 150, 120, 56, Color(0, 255, 255));
+
+    string options[3] = { "New Game", "Continue", "Exit" };
+    for (int i = 0; i < 3; i++)
+    {
+        float y = 250.f + i * 60.f;
+        if (i == menuChoice)
+        {
+            drawText(window, "> " + options[i], 180, y, 30, Color(255, 255, 0));
+        }
+        else
+        {
+            drawText(window, "  " + options[i], 180, y, 30);
+        }
+    }
+
+    if (showNoSave)
+    {
+        drawText(window, "No saved game", 180, 440, 22, Color(255, 0, 0));
+    }
+}
+
+void drawPlaying(RenderWindow& window)
+{
+    drawBoard(window);
+    drawPiece(window);
+    drawSidePanel(window);
+}
+
+void drawGameOver(RenderWindow& window)
+{
+    drawBoard(window);
+    drawSidePanel(window);
+
+    RectangleShape shade({ 520.f, 640.f });
+    shade.setPosition({ 0.f, 0.f });
+    shade.setFillColor(Color(0, 0, 0, 180));
+    window.draw(shade);
+
+    drawText(window, "GAME OVER", 130, 240, 44, Color(255, 0, 0));
+    drawText(window, "Final score: " + to_string(score), 150, 310, 26);
+    drawText(window, "Press Enter", 170, 360, 22, Color(200, 200, 200));
+}
+
+void updateGame()
+{
+    if (gameState == PLAYING)
+    {
+        updateFalling();    // Task 3, FOR SAFWAN
     }
 }
