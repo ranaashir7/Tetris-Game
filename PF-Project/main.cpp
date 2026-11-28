@@ -13,6 +13,12 @@ const float BOARD_Y = 20.f;
 const int LINES_PER_LEVEL = 10;
 const int LINE_POINTS[5] = { 0, 100, 300, 500, 800 };
 
+const float PANEL_X = 350.f;
+const int START_DELAY = 30;
+const int DELAY_STEP = 5;
+const int MIN_DELAY = 5;
+const int GAME_OVER = 2;
+
 int board[ROWS][COLS];
 char pieces[7][4][4];
 
@@ -21,6 +27,9 @@ int currentPiece;
 int pieceRow, pieceCol;
 
 int score, lines, level;
+int nextPiece;
+int fallDelay;
+int gameState;
 
 bool piecesLoaded;
 bool fontLoaded;
@@ -59,6 +68,10 @@ void addScore(int cleared);
 
 // TASK 5
 void updateSpeed();
+void endGame();
+void drawMiniPiece(RenderWindow& window, int pieceNumber, float x, float y);
+void drawSidePanel(RenderWindow& window);
+void clearSaveFile();
 
 bool canPlace(char s[4][4], int row, int col);
 void moveLeft();
@@ -121,9 +134,58 @@ void addScore(int cleared)
     updateSpeed();
 }
 // TASK 5
+// level 1 is 30 frames per drop, then 25, 20 and so on, but never below 5
 void updateSpeed()
 {
-    // TODO 5.1
+    fallDelay = START_DELAY - (level - 1) * DELAY_STEP;
+
+    if (fallDelay < MIN_DELAY)
+    {
+        fallDelay = MIN_DELAY;
+    }
+}
+
+void endGame()
+{
+    gameState = GAME_OVER;
+    clearSaveFile();        // so a finished game can't be continued
+}
+
+// small version of a piece, used for the NEXT box
+void drawMiniPiece(RenderWindow& window, int pieceNumber, float x, float y)
+{
+    for (int r = 0; r < 4; r++)
+    {
+        for (int c = 0; c < 4; c++)
+        {
+            if (pieces[pieceNumber][r][c] == '#')
+            {
+                RectangleShape square({ 18.f, 18.f });
+                square.setFillColor(colors[pieceNumber + 1]);
+                square.setPosition({ x + c * 20.f, y + r * 20.f });
+                window.draw(square);
+            }
+        }
+    }
+}
+
+void drawSidePanel(RenderWindow& window)
+{
+    drawText(window, "SCORE", PANEL_X, 30, 22);
+    drawText(window, to_string(score), PANEL_X, 58, 28, Color(255, 255, 0));
+
+    drawText(window, "LINES", PANEL_X, 110, 22);
+    drawText(window, to_string(lines), PANEL_X, 138, 28, Color(255, 255, 0));
+
+    drawText(window, "LEVEL", PANEL_X, 190, 22);
+    drawText(window, to_string(level), PANEL_X, 218, 28, Color(255, 255, 0));
+
+    drawText(window, "NEXT", PANEL_X, 275, 22);
+    drawMiniPiece(window, nextPiece, PANEL_X, 310);
+}
+void clearSaveFile()
+{
+    // TODO 7: teammate C fills this in
 }
 int main()
 {
